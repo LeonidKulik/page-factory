@@ -3,7 +3,6 @@ package ru.sbtqa.tag.pagefactory.aspects;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
@@ -21,25 +20,19 @@ import ru.yandex.qatools.htmlelements.element.TypifiedElement;
 @Aspect
 public class ClickAspect {
 
-    @Pointcut("call(* org.openqa.selenium.WebElement.click()) || call(* ru.yandex.qatools.htmlelements.element.*.click()) ")
-    public void clickMethod() {
-    }
-
-    @Around("clickMethod()")
+    @Around("call(* org.openqa.selenium.WebElement.click()) || call(* ru.yandex.qatools.htmlelements.element.*.click())")
     public void doAroundClick(ProceedingJoinPoint joinPoint) throws Throwable {
-        WebElement targetWebElement;
+        WebElement targetWebElement = null;
 
-        Class<? extends Page> elementRedirect;
         if (joinPoint.getTarget() instanceof TypifiedElement) {
             targetWebElement = ((TypifiedElement) joinPoint.getTarget()).getWrappedElement();
-            TypifiedElement typifiedElement = (TypifiedElement) joinPoint.getTarget();
-            elementRedirect = PageFactory.getInstance().getCurrentPage().getElementRedirect(typifiedElement);
         } else if (joinPoint.getTarget() instanceof WebElement) {
             targetWebElement = (WebElement) joinPoint.getTarget();
-            elementRedirect = PageFactory.getInstance().getCurrentPage().getElementRedirect(targetWebElement);
         } else {
             return;
         }
+
+        Class<? extends Page> elementRedirect = PageFactory.getInstance().getCurrentPage().getElementRedirect(targetWebElement);
 
         String elementHighlightStyle = null;
         boolean isVideoHighlightEnabled = Boolean.valueOf(Props.get("video.highlight.enabled"));
@@ -60,8 +53,8 @@ public class ClickAspect {
                 //scroll to invisible element
                 if (size.getHeight() < (elementLocation.getY() + elementSize.getHeight() + 200)) {
                     ((JavascriptExecutor) PageFactory.getWebDriver()).
-                          executeScript("window.scroll(" + elementLocation.getX() + ","
-                                + (elementLocation.getY() - 200) + ");");
+                            executeScript("window.scroll(" + elementLocation.getX() + ","
+                                    + (elementLocation.getY() - 200) + ");");
                 }
             }
 

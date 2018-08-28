@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ru.sbtqa.tag</groupId>
   <artifactId>page-factory</artifactId>
-  <version>1.10-SNAPSHOT</version>
+  <version>1.11-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>page-factory</name>
   <description>page-factory description</description>
@@ -41,8 +41,9 @@
   </scm>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <version.cucumber>2.4.0</version.cucumber>
   </properties>
   <distributionManagement>
     <snapshotRepository>
@@ -64,7 +65,25 @@
     <dependency>
       <groupId>ru.sbtqa.tag</groupId>
       <artifactId>datajack</artifactId>
+      <version>1.4.0</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>ru.sbtqa.tag.datajack.adaptors</groupId>
+      <artifactId>datajack-json-adaptor</artifactId>
       <version>1.2.0</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>ru.sbtqa.tag.datajack.adaptors</groupId>
+      <artifactId>datajack-properties-adaptor</artifactId>
+      <version>1.1.0</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>ru.sbtqa.tag.datajack.adaptors</groupId>
+      <artifactId>datajack-excel-adaptor</artifactId>
+      <version>1.1.0</version>
       <type>jar</type>
     </dependency>
     <dependency>
@@ -77,13 +96,17 @@
       <artifactId>video-recorder</artifactId>
       <version>1.0.6</version>
       <type>jar</type> 
-   </dependency>
+    </dependency>
     <dependency>
-      <groupId>ru.sbtqa.tag</groupId>
-      <artifactId>cucumber-runner</artifactId>
-      <version>1.0.10</version>
-      <type>jar</type>
-   </dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-java</artifactId>
+      <version>${version.cucumber}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-junit</artifactId>
+      <version>${version.cucumber}</version>
+    </dependency>
     <dependency>
       <groupId>ru.sbtqa.htmlelements</groupId>
       <artifactId>htmlelements-java</artifactId>
@@ -151,6 +174,11 @@
       <type>jar</type>
     </dependency>
     <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjrt</artifactId>
+      <version>1.8.13</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
       <version>2.0.10</version>
@@ -184,6 +212,39 @@
           <nexusUrl>https://oss.sonatype.org/</nexusUrl>
           <autoReleaseAfterClose>true</autoReleaseAfterClose>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>aspectj-maven-plugin</artifactId>
+        <version>1.11</version>
+        <configuration>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+          <complianceLevel>1.8</complianceLevel>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <weaveDependencies>
+            <weaveDependency>
+              <groupId>io.cucumber</groupId>
+              <artifactId>cucumber-junit</artifactId>
+            </weaveDependency>
+            <weaveDependency>
+              <groupId>ru.sbtqa.htmlelements</groupId>
+              <artifactId>htmlelements-java</artifactId>
+            </weaveDependency>
+            <weaveDependency>
+              <groupId>org.seleniumhq.selenium</groupId>
+              <artifactId>selenium-api</artifactId>
+            </weaveDependency>
+          </weaveDependencies>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>test-compile</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
